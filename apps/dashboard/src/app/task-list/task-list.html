@@ -1,0 +1,173 @@
+<div class="w-full p-2 sm:p-4">
+  <div class="mb-4">
+    <h2 class="text-base sm:text-lg font-semibold mb-2 transition-colors duration-300"
+        [class.text-gray-800]="!isDarkMode"
+        [class.text-gray-200]="isDarkMode">
+      Tasks Progress
+    </h2>
+    <div class="w-full rounded-full h-3 sm:h-4 overflow-hidden transition-colors duration-300"
+         [class.bg-gray-200]="!isDarkMode"
+         [class.bg-gray-700]="isDarkMode">
+      <div
+        class="bg-indigo-500 h-3 sm:h-4 transition-all duration-500"
+        [style.width.%]="progressPercentage"
+      ></div>
+    </div>
+    <p class="mt-2 text-xs sm:text-sm transition-colors duration-300"
+       [class.text-gray-600]="!isDarkMode"
+       [class.text-gray-400]="isDarkMode">
+      {{ done.length }} of {{ totalTasks }} tasks completed ({{ progressPercentage }}%)
+    </p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-2 sm:p-4">
+  <div
+    cdkDropList
+    id="todoList"
+    #todoList="cdkDropList"
+    [cdkDropListData]="todo"
+    [cdkDropListConnectedTo]="[inProgressList, doneList]"
+    class="p-2 sm:p-4 rounded-lg shadow-md transition-colors duration-300"
+    [class.bg-indigo-50]="!isDarkMode"
+    [class.bg-gray-800]="isDarkMode"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="text-base sm:text-xl font-bold transition-colors duration-300"
+          [class.text-indigo-700]="!isDarkMode"
+          [class.text-indigo-300]="isDarkMode">Todo</h2>
+      <button
+        *ngIf="showAddBtn"
+        (click)="openAddModal()"
+        class="px-2 py-1 text-sm sm:text-base bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors duration-200"
+      >
+        +
+      </button>
+    </div>
+    <app-task-item
+      *ngFor="let task of todo"
+      [task]="task"
+      cdkDrag
+    ></app-task-item>
+  </div>
+
+  <div
+    cdkDropList
+    id="inProgressList"
+    #inProgressList="cdkDropList"
+    [cdkDropListData]="inProgress"
+    [cdkDropListConnectedTo]="[todoList, doneList]"
+    class="p-2 sm:p-4 rounded-lg shadow-md transition-colors duration-300"
+    [class.bg-indigo-50]="!isDarkMode"
+    [class.bg-gray-800]="isDarkMode"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <h2 class="text-base sm:text-xl font-bold mb-2 transition-colors duration-300"
+        [class.text-indigo-700]="!isDarkMode"
+        [class.text-indigo-300]="isDarkMode">In Progress</h2>
+    <app-task-item *ngFor="let task of inProgress" [task]="task" cdkDrag></app-task-item>
+  </div>
+
+  <div
+    cdkDropList
+    id="doneList"
+    #doneList="cdkDropList"
+    [cdkDropListData]="done"
+    [cdkDropListConnectedTo]="[todoList, inProgressList]"
+    class="p-2 sm:p-4 rounded-lg shadow-md transition-colors duration-300"
+    [class.bg-indigo-50]="!isDarkMode"
+    [class.bg-gray-800]="isDarkMode"
+    (cdkDropListDropped)="drop($event)"
+  >
+    <h2 class="text-base sm:text-xl font-bold mb-2 transition-colors duration-300"
+        [class.text-indigo-700]="!isDarkMode"
+        [class.text-indigo-300]="isDarkMode">Done</h2>
+    <app-task-item *ngFor="let task of done" [task]="task" cdkDrag></app-task-item>
+  </div>
+</div>
+
+<div
+  *ngIf="showAddModal"
+  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2"
+>
+  <div class="rounded-lg shadow-lg w-full max-w-sm sm:max-w-md md:max-w-lg p-4 sm:p-6 transition-colors duration-300"
+       [class.bg-white]="!isDarkMode"
+       [class.bg-gray-900]="isDarkMode">
+    <h3 class="text-lg sm:text-xl font-bold mb-4 transition-colors duration-300"
+        [class.text-gray-900]="!isDarkMode"
+        [class.text-gray-100]="isDarkMode">Add Task</h3>
+
+    <label class="block mb-2 text-xs sm:text-sm font-medium transition-colors duration-300"
+           [class.text-gray-700]="!isDarkMode"
+           [class.text-gray-300]="isDarkMode">Title</label>
+    <input
+      type="text"
+      [(ngModel)]="newTask.title"
+      class="w-full p-2 mb-4 border rounded transition-colors duration-300 text-sm sm:text-base"
+      [class.bg-white]="!isDarkMode"
+      [class.text-gray-900]="!isDarkMode"
+      [class.border-gray-300]="!isDarkMode"
+      [class.bg-gray-800]="isDarkMode"
+      [class.text-gray-100]="isDarkMode"
+      [class.border-gray-600]="isDarkMode"
+      placeholder="Enter title"
+    />
+
+    <label class="block mb-2 text-xs sm:text-sm font-medium transition-colors duration-300"
+           [class.text-gray-700]="!isDarkMode"
+           [class.text-gray-300]="isDarkMode">Description</label>
+    <textarea
+      [(ngModel)]="newTask.description"
+      class="w-full p-2 mb-4 border rounded transition-colors duration-300 text-sm sm:text-base"
+      [class.bg-white]="!isDarkMode"
+      [class.text-gray-900]="!isDarkMode"
+      [class.border-gray-300]="!isDarkMode"
+      [class.bg-gray-800]="isDarkMode"
+      [class.text-gray-100]="isDarkMode"
+      [class.border-gray-600]="isDarkMode"
+      rows="3"
+      placeholder="Enter description"
+    ></textarea>
+
+    <label class="block mb-2 text-xs sm:text-sm font-medium transition-colors duration-300"
+           [class.text-gray-700]="!isDarkMode"
+           [class.text-gray-300]="isDarkMode">Assign To:</label>
+    <select
+      [(ngModel)]="newTask.assignee"
+      name="assignee"
+      class="w-full p-2 mb-3 border rounded transition-colors duration-300 text-sm sm:text-base"
+      [class.bg-white]="!isDarkMode"
+      [class.text-gray-900]="!isDarkMode"
+      [class.border-gray-300]="!isDarkMode"
+      [class.bg-gray-700]="isDarkMode"
+      [class.text-white]="isDarkMode"
+      [class.border-gray-600]="isDarkMode"
+    >
+      <option *ngFor="let user of allUsers" [value]="user.username">
+        {{ user.username }}
+      </option>
+    </select>
+
+    <div class="flex flex-col sm:flex-row justify-end sm:space-x-2 space-y-2 sm:space-y-0 mt-2">
+      <button
+        (click)="saveTask()"
+        class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition-colors duration-200 text-sm sm:text-base"
+      >
+        Save
+      </button>
+      <button
+        (click)="closeAddModal()"
+        class="px-4 py-2 rounded transition-colors duration-200 text-sm sm:text-base"
+        [class.bg-red-500]="!isDarkMode"
+        [class.hover:bg-red-600]="!isDarkMode"
+        [class.text-white]="!isDarkMode"
+        [class.bg-red-800]="isDarkMode"
+        [class.hover:bg-red-900]="isDarkMode"
+        [class.text-red-100]="isDarkMode"
+      >
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
